@@ -96,6 +96,7 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     });
     const resetPassToken = jwtHelper_1.jwtHelpers.generateToken({ email: result.email, role: result.role }, config_1.default.jwt.register_verify_token, config_1.default.jwt.refresh_token_expires_in);
     const resetPassLink = config_1.default.registration_link + `?email=${result.email}&token=${resetPassToken}`;
+    console.log(resetPassLink);
     yield (0, emailSender_1.default)(result.email, `
        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #fafafa;">
     <p style="font-size: 16px;">Dear User,</p>
@@ -135,6 +136,7 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const verifyEmailService = (token) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = jwtHelper_1.jwtHelpers.verifyToken(token, process.env.REGISTER_VERIFY_TOKEN);
+    console.log(payload, "verified");
     if (!payload) {
         throw new ApiError_1.default(http_status_codes_1.default.FORBIDDEN, "Token is invalid!");
     }

@@ -10,6 +10,7 @@ const public_blog_route_1 = require("../modules/Blog/public.blog.route");
 const image_route_1 = require("../modules/Image/image.route");
 const achievement_upload_route_1 = require("../modules/Image/achievement-upload.route");
 const member_route_1 = __importDefault(require("../modules/Member/member.route"));
+const notice_routes_1 = require("../modules/Notice/notice.routes");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -35,6 +36,10 @@ const moduleRoutes = [
     {
         path: "/members",
         route: member_route_1.default,
+    },
+    {
+        path: "/notices",
+        route: notice_routes_1.NoticeRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

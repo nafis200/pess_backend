@@ -12,7 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PublicBlogRoutes = void 0;
 const express_1 = require("express");
 const blog_service_1 = require("./blog.service");
+const reaction_route_1 = require("./reaction.route");
+const comment_route_1 = require("./comment.route");
 const router = (0, express_1.Router)();
+router.use("/:blogId/reactions", reaction_route_1.ReactionRoutes);
+router.use("/:blogId/comments", comment_route_1.CommentRoutes);
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { search, status, category, page, limit } = req.query;

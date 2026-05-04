@@ -8,52 +8,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReactionRoutes = void 0;
 const express_1 = require("express");
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
-const router = (0, express_1.Router)();
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const prisma_1 = __importDefault(require("../../../shared/prisma"));
+const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
+const router = (0, express_1.Router)({ mergeParams: true });
 const REACTION_TYPES = ["love", "like", "clap", "inspiring", "insightful"];
-// Get reactions for a blog
-router.get("/:blogId/reactions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { blogId } = req.params;
-        const blogIdNum = Number(blogId);
-        const reactions = yield Promise.all(REACTION_TYPES.map((type) => __awaiter(void 0, void 0, void 0, function* () {
-            const count = yield prisma.reaction.count({
-                where: { blogId: blogIdNum, type },
+router.get("/", (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const blogId = Number(req.params.blogId);
+    const reactions = yield Promise.all(REACTION_TYPES.map((type) => __awaiter(void 0, void 0, void 0, function* () {
+        const count = yield prisma_1.default.reaction.count({
+            where: { blogId, type },
+        });
+        return { type, count, hasReacted: false };
+    })));
+    res.status(200).json({ success: true, data: reactions });
+})));
+router.post("/", (0, auth_1.default)("USER", "PREMIUM_USER", "ADMIN"), (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const blogId = Number(req.params.blogId);
+    const { type } = req.body;
+    const userId = String((_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
+    const existingReaction = yield prisma_1.default.reaction.findFirst({
+        where: { blogId, userId },
+    });
+    if (existingReaction) {
+        if (existingReaction.type === type) {
+            yield prisma_1.default.reaction.delete({ where: { id: existingReaction.id } });
+        }
+        else {
+            yield prisma_1.default.reaction.update({
+                where: { id: existingReaction.id },
+                data: { type },
             });
-            return { type, count, hasReacted: false };
-        })));
-        res.json({ success: true, data: reactions });
+        }
     }
-    catch (error) {
-        res.status(500).json({ success: false, error: "Failed to fetch reactions" });
-    }
-}));
-// Toggle reaction
-router.post("/:blogId/reactions", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { blogId } = req.params;
-        const { type } = req.body;
-        // For now, just create/update without user tracking
-        const reaction = yield prisma.reaction.create({
+    else {
+        yield prisma_1.default.reaction.create({
             data: {
-                blogId: Number(blogId),
+                blogId,
                 type,
+                userId: String(userId),
             },
         });
-        const reactions = yield Promise.all(REACTION_TYPES.map((rType) => __awaiter(void 0, void 0, void 0, function* () {
-            const count = yield prisma.reaction.count({
-                where: { blogId: Number(blogId), type: rType },
-            });
-            return { type: rType, count, hasReacted: rType === type };
-        })));
-        res.json({ success: true, data: reactions });
     }
-    catch (error) {
-        res.status(500).json({ success: false, error: "Failed to toggle reaction" });
-    }
-}));
+    const reactions = yield Promise.all(REACTION_TYPES.map((rType) => __awaiter(void 0, void 0, void 0, function* () {
+        const count = yield prisma_1.default.reaction.count({
+            where: { blogId, type: rType },
+        });
+        return { type: rType, count, hasReacted: false };
+    })));
+    res.status(200).json({ success: true, data: reactions });
+})));
 exports.ReactionRoutes = router;
