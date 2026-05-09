@@ -1,6 +1,5 @@
 import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
-import httpStatus from "http-status-codes";
 import { Prisma } from "@prisma/client";
 
 const generateSlug = (title: string): string => {
@@ -75,7 +74,7 @@ const getAllBlogs = async (filters: BlogFilters) => {
     ];
   }
 
-  if (status) {
+  if (status && (status === "PUBLISHED" || status === "DRAFT")) {
     where.status = status as "DRAFT" | "PUBLISHED";
   }
 
@@ -89,12 +88,19 @@ const getAllBlogs = async (filters: BlogFilters) => {
       skip,
       take: limit,
       orderBy: { createdAt: "desc" },
+      include: { author: true },
     }),
     prisma.blog.count({ where }),
   ]);
 
+  const blogsWithAuthor = blogs.map(blog => ({
+    ...blog,
+    authorName: blog.author?.name || "Admin",
+    authorImage: blog.author?.profilePhoto || null,
+  }));
+
   return {
-    data: blogs,
+    data: blogsWithAuthor,
     meta: {
       total,
       page: Number(page),
@@ -107,13 +113,35 @@ const getAllBlogs = async (filters: BlogFilters) => {
 const getSingleBlog = async (id: number) => {
   const blog = await prisma.blog.findUnique({
     where: { id },
+    include: { author: true },
   });
 
   if (!blog) {
     throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   }
 
-  return blog;
+  return {
+    ...blog,
+    authorName: blog.author?.name || "FitNest Admin",
+    authorImage: blog.author?.profilePhoto || null,
+  };
+};
+
+const getBlogBySlug = async (slug: string) => {
+  const blog = await prisma.blog.findUnique({
+    where: { slug },
+    include: { author: true },
+  });
+
+  if (!blog) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
+  }
+
+  return {
+    ...blog,
+    authorName: blog.author?.name || "FitNest Admin",
+    authorImage: blog.author?.profilePhoto || null,
+  };
 };
 
 const updateBlog = async (id: number, payload: Partial<BlogPayload>) => {
@@ -166,6 +194,7 @@ export const BlogServices = {
   createBlog,
   getAllBlogs,
   getSingleBlog,
+  getBlogBySlug,
   updateBlog,
   deleteBlog,
 };
