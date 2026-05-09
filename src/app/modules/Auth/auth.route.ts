@@ -2,7 +2,6 @@ import { NextFunction, Request, Response, Router } from "express";
 import passport from "passport";
 
 import { AuthControllers } from "./auth.controller";
-import { fileUploader } from "../../helper/fileUploader";
 import auth from "../../middlewares/auth";
 
 const router = Router();
