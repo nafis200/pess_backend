@@ -48,7 +48,7 @@ const registerUser = async (payload: RegisterUserInput) => {
       name,
       email,
       password: hashedPassword,
-      role: "USER",
+      role: "ADMIN",
     },
     select: {
       id: true,
