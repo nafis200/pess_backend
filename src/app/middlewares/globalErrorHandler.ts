@@ -5,6 +5,9 @@ import config from "../config";
 
 const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 
+    console.error("Global Error Handler - Error:", err.message);
+    console.error("Stack:", err.stack);
+
     let statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
     let success = false;
     let message = err.message || "Something went wrong!";

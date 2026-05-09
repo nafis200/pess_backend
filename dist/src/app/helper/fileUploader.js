@@ -23,27 +23,42 @@ cloudinary_1.v2.config({
     api_key: config_1.default.cloudinary.cloud_api_key,
     api_secret: config_1.default.cloudinary.cloud_secret_key
 });
+const uploadDir = path_1.default.join(process.cwd(), 'uploads');
+if (!fs_1.default.existsSync(uploadDir)) {
+    fs_1.default.mkdirSync(uploadDir, { recursive: true });
+}
 const storage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path_1.default.join(process.cwd(), 'uploads'));
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
     }
 });
-const upload = (0, multer_1.default)({ storage: storage });
+const upload = (0, multer_1.default)({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }
+});
 const uploadToCloudinary = (file) => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve, reject) => {
-        cloudinary_1.v2.uploader.upload(file.path, (error, result) => {
-            fs_1.default.unlinkSync(file.path);
-            if (error) {
-                reject(error);
-            }
-            else {
-                resolve(result);
-            }
+    try {
+        const result = yield cloudinary_1.v2.uploader.upload(file.path, {
+            resource_type: 'image'
         });
-    });
+        if (fs_1.default.existsSync(file.path)) {
+            fs_1.default.unlinkSync(file.path);
+        }
+        return result;
+    }
+    catch (error) {
+        console.error("Cloudinary upload error:", error);
+        if (fs_1.default.existsSync(file.path)) {
+            fs_1.default.unlinkSync(file.path);
+        }
+        throw new Error(error.message || "Cloudinary upload failed");
+    }
 });
 exports.fileUploader = {
     upload,

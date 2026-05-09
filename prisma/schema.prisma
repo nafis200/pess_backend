@@ -41,3 +41,28 @@ enum UserStatus {
   BLOCKED
   DELETED
 }
+
+model Blog {
+  id                  Int          @id @default(autoincrement())
+  title               String       @db.VarChar(255)
+  slug                String       @unique @db.VarChar(255)
+  shortDescription    String?      @db.Text
+  content             String       @db.Text
+  featuredImage       String?      @db.VarChar(500)
+  category            String?      @db.VarChar(100)
+  tags                String[]     @db.VarChar(100)
+  status              BlogStatus   @default(DRAFT)
+  seoMetaTitle        String?      @db.VarChar(160)
+  seoMetaDescription  String?      @db.Text
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}

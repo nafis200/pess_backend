@@ -7,6 +7,8 @@ const client_1 = require("@prisma/client");
 const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../config"));
 const globalErrorHandler = (err, req, res, next) => {
+    console.error("Global Error Handler - Error:", err.message);
+    console.error("Stack:", err.stack);
     let statusCode = err.statusCode || http_status_1.default.INTERNAL_SERVER_ERROR;
     let success = false;
     let message = err.message || "Something went wrong!";
