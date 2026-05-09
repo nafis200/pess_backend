@@ -35,6 +35,17 @@ model Image {
   @@map("images")
 }
 
+model Video {
+  id        String   @id @default(uuid())
+  title     String
+  videoLink String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("videos")
+}
+
+
 
 model ImageGallery {
   id     Int      @id @default(autoincrement())
