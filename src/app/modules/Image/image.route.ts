@@ -8,6 +8,30 @@ const router = Router();
 
 router.get(
   "/",
+  catchAsync(async (req: Request, res: Response) => {
+    const gallery = await prisma.imageGallery.findFirst();
+    
+    if (!gallery || !gallery.images) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const images = gallery.images.map((url, index) => ({
+      id: `${gallery.id}-${index}`,
+      url: url,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: images,
+    });
+  })
+);
+
+router.get(
+  "/admin",
   auth("ADMIN"),
   catchAsync(async (req: Request, res: Response) => {
     const gallery = await prisma.imageGallery.findFirst();
