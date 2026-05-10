@@ -1,59 +1,72 @@
-import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Router, Request, Response } from "express";
+import auth from "../../middlewares/auth";
+import prisma from "../../../shared/prisma";
+import catchAsync from "../../../shared/catchAsync";
 
-const prisma = new PrismaClient();
-const router = Router();
+const router = Router({ mergeParams: true });
 
 const REACTION_TYPES = ["love", "like", "clap", "inspiring", "insightful"];
 
-// Get reactions for a blog
-router.get("/:blogId/reactions", async (req, res) => {
-  try {
-    const { blogId } = req.params;
-    const blogIdNum = Number(blogId);
+router.get(
+  "/",
+  catchAsync(async (req: Request, res: Response) => {
+    const blogId = Number((req.params as any).blogId);
 
     const reactions = await Promise.all(
       REACTION_TYPES.map(async (type) => {
         const count = await prisma.reaction.count({
-          where: { blogId: blogIdNum, type },
+          where: { blogId, type },
         });
         return { type, count, hasReacted: false };
       })
     );
 
-    res.json({ success: true, data: reactions });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to fetch reactions" });
-  }
-});
+    res.status(200).json({ success: true, data: reactions });
+  })
+);
 
-// Toggle reaction
-router.post("/:blogId/reactions", async (req, res) => {
-  try {
-    const { blogId } = req.params;
+router.post(
+  "/",
+  auth("USER", "PREMIUM_USER", "ADMIN"),
+  catchAsync(async (req: Request, res: Response) => {
+    const blogId = Number((req.params as any).blogId);
     const { type } = req.body;
+    const userId = String((req as any).user?.userId);
 
-    // For now, just create/update without user tracking
-    const reaction = await prisma.reaction.create({
-      data: {
-        blogId: Number(blogId),
-        type,
-      },
+    const existingReaction = await prisma.reaction.findFirst({
+      where: { blogId, userId },
     });
+
+    if (existingReaction) {
+      if (existingReaction.type === type) {
+        await prisma.reaction.delete({ where: { id: existingReaction.id } });
+      } else {
+        await prisma.reaction.update({
+          where: { id: existingReaction.id },
+          data: { type },
+        });
+      }
+    } else {
+      await prisma.reaction.create({
+        data: {
+          blogId,
+          type,
+          userId: String(userId),
+        },
+      });
+    }
 
     const reactions = await Promise.all(
       REACTION_TYPES.map(async (rType) => {
         const count = await prisma.reaction.count({
-          where: { blogId: Number(blogId), type: rType },
+          where: { blogId, type: rType },
         });
-        return { type: rType, count, hasReacted: rType === type };
+        return { type: rType, count, hasReacted: false };
       })
     );
 
-    res.json({ success: true, data: reactions });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to toggle reaction" });
-  }
-});
+    res.status(200).json({ success: true, data: reactions });
+  })
+);
 
 export const ReactionRoutes = router;

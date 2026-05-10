@@ -1,7 +1,5 @@
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -22,14 +20,12 @@ model User {
   updatedAt               DateTime             @updatedAt
 
   blogs                   Blog[]
+  members                 Member[]
 }
-
-
-
 
 model ImageGallery {
   id      Int      @id @default(autoincrement())
-  images  String[] @db.Text
+  images  String[]
 }
 
 enum UserRole {
@@ -44,18 +40,84 @@ enum UserStatus {
   DELETED
 }
 
+enum MemberType {
+  FACULTY
+  STUDENT
+  ATHLETE
+  CAPTAIN
+  ALUMNI
+}
+
+model Member {
+  id            Int            @id @default(autoincrement())
+  name          String         
+  email         String?        
+  profilePhoto  String?        
+  phone         String?        
+  
+  memberType    MemberType     @default(STUDENT)
+  sportCategory String?        
+  role          String?        
+  status        String         @default("ACTIVE")
+  
+  institution    String?        
+  expertise     String[]      
+  achievements  String[]      
+  highlights     String?       
+  yearsActive    Int?
+  graduationYear Int?
+  
+  userId         Int?
+  user           User?         @relation(fields: [userId], references: [id])
+  
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  achievements_rel Achievement[]
+
+  @@index([memberType])
+  @@index([sportCategory])
+  @@index([status])
+}
+
+model Achievement {
+  id            Int      @id @default(autoincrement())
+  title         String   
+  description   String?  
+  type          String   
+  level         String   
+  
+  sport         String?  
+  year          Int?
+  date          DateTime?
+  imageUrl      String?
+  
+  memberId      Int?
+  member        Member?  @relation(fields: [memberId], references: [id])
+  
+  medal         String?  
+  trophy        String?  
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([type])
+  @@index([sport])
+  @@index([level])
+}
+
 model Blog {
   id                  Int          @id @default(autoincrement())
-  title               String       @db.VarChar(255)
-  slug                String       @unique @db.VarChar(255)
-  shortDescription    String?      @db.Text
-  content             String       @db.Text
-  featuredImage       String?      @db.VarChar(500)
-  category            String?      @db.VarChar(100)
-  tags                String[]     @db.VarChar(100)
+  title               String       
+  slug                String       @unique 
+  shortDescription    String?      
+  content             String       
+  featuredImage       String?      
+  category            String?      
+  tags                String[]     
   status              BlogStatus   @default(DRAFT)
-  seoMetaTitle        String?      @db.VarChar(160)
-  seoMetaDescription  String?      @db.Text
+  seoMetaTitle        String?      
+  seoMetaDescription  String?      
   authorId           Int?
   author             User?        @relation(fields: [authorId], references: [id])
   createdAt           DateTime     @default(now())
@@ -75,7 +137,7 @@ model Comment {
   parentId  Int?
   name      String
   email     String
-  content   String   @db.Text
+  content   String   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

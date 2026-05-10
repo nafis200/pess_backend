@@ -56,7 +56,7 @@ const getAllBlogs = (filters) => __awaiter(void 0, void 0, void 0, function* () 
             { shortDescription: { contains: search, mode: "insensitive" } },
         ];
     }
-    if (status) {
+    if (status && (status === "PUBLISHED" || status === "DRAFT")) {
         where.status = status;
     }
     if (category) {
@@ -68,11 +68,16 @@ const getAllBlogs = (filters) => __awaiter(void 0, void 0, void 0, function* () 
             skip,
             take: limit,
             orderBy: { createdAt: "desc" },
+            include: { author: true },
         }),
         prisma_1.default.blog.count({ where }),
     ]);
+    const blogsWithAuthor = blogs.map(blog => {
+        var _a, _b;
+        return (Object.assign(Object.assign({}, blog), { authorName: ((_a = blog.author) === null || _a === void 0 ? void 0 : _a.name) || "Admin", authorImage: ((_b = blog.author) === null || _b === void 0 ? void 0 : _b.profilePhoto) || null }));
+    });
     return {
-        data: blogs,
+        data: blogsWithAuthor,
         meta: {
             total,
             page: Number(page),
@@ -82,13 +87,26 @@ const getAllBlogs = (filters) => __awaiter(void 0, void 0, void 0, function* () 
     };
 });
 const getSingleBlog = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const blog = yield prisma_1.default.blog.findUnique({
         where: { id },
+        include: { author: true },
     });
     if (!blog) {
         throw new ApiError_1.default(http_status_codes_1.default.NOT_FOUND, "Blog not found");
     }
-    return blog;
+    return Object.assign(Object.assign({}, blog), { authorName: ((_a = blog.author) === null || _a === void 0 ? void 0 : _a.name) || "FitNest Admin", authorImage: ((_b = blog.author) === null || _b === void 0 ? void 0 : _b.profilePhoto) || null });
+});
+const getBlogBySlug = (slug) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const blog = yield prisma_1.default.blog.findUnique({
+        where: { slug },
+        include: { author: true },
+    });
+    if (!blog) {
+        throw new ApiError_1.default(http_status_codes_1.default.NOT_FOUND, "Blog not found");
+    }
+    return Object.assign(Object.assign({}, blog), { authorName: ((_a = blog.author) === null || _a === void 0 ? void 0 : _a.name) || "FitNest Admin", authorImage: ((_b = blog.author) === null || _b === void 0 ? void 0 : _b.profilePhoto) || null });
 });
 const updateBlog = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const existingBlog = yield prisma_1.default.blog.findUnique({
@@ -130,6 +148,7 @@ exports.BlogServices = {
     createBlog,
     getAllBlogs,
     getSingleBlog,
+    getBlogBySlug,
     updateBlog,
     deleteBlog,
 };

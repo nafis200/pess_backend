@@ -11,15 +11,13 @@ import config from "../config";
 const auth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         try {
-            const headerToken = req.headers.authorization;
-            const cookieToken = req.cookies?.accessToken;
-            const token = headerToken || cookieToken;
-
-            if (!token) {
+            const headerToken = req.headers.authorization?.replace(/^Bearer\s+/i, "");
+            
+            if (!headerToken) {
                 throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
             }
 
-            const verifiedUser = jwtHelpers.verifyToken(token, config.jwt.jwt_secret as Secret)
+            const verifiedUser = jwtHelpers.verifyToken(headerToken, config.jwt.jwt_secret as Secret)
 
             req.user = verifiedUser;
 

@@ -1,7 +1,12 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { BlogServices } from "./blog.service";
+import { ReactionRoutes } from "./reaction.route";
+import { CommentRoutes } from "./comment.route";
 
 const router = Router();
+
+router.use("/:blogId/reactions", ReactionRoutes);
+router.use("/:blogId/comments", CommentRoutes);
 
 router.get(
   "/",
@@ -42,7 +47,7 @@ router.get(
   async (req: Request, res: Response) => {
     try {
       const { slug } = req.params;
-      const result = await BlogServices.getBlogBySlug(slug);
+      const result = await BlogServices.getBlogBySlug(slug as string);
 
       if (!result || result.status !== "PUBLISHED") {
         return res.status(404).json({

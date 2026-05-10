@@ -1,15 +1,17 @@
-import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Router, Request, Response } from "express";
+import auth from "../../middlewares/auth";
+import prisma from "../../../shared/prisma";
+import catchAsync from "../../../shared/catchAsync";
 
-const prisma = new PrismaClient();
-const router = Router();
+const router = Router({ mergeParams: true });
 
-// Get comments for a blog
-router.get("/:blogId/comments", async (req, res) => {
-  try {
-    const { blogId } = req.params;
+router.get(
+  "/",
+  catchAsync(async (req: Request, res: Response) => {
+    const blogId = Number((req.params as any).blogId);
+
     const comments = await prisma.comment.findMany({
-      where: { blogId: Number(blogId), parentId: null },
+      where: { blogId, parentId: null },
       include: {
         replies: {
           include: { replies: true },
@@ -18,61 +20,68 @@ router.get("/:blogId/comments", async (req, res) => {
       },
       orderBy: { createdAt: "desc" },
     });
-    res.json({ success: true, data: comments });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to fetch comments" });
-  }
-});
 
-// Create comment
-router.post("/:blogId/comments", async (req, res) => {
-  try {
-    const { blogId } = req.params;
-    const { name, email, content, parentId } = req.body;
+    res.status(200).json({ success: true, data: comments });
+  })
+);
+
+router.post(
+  "/",
+  auth("USER", "PREMIUM_USER", "ADMIN"),
+  catchAsync(async (req: Request, res: Response) => {
+    const blogId = Number((req.params as any).blogId);
+    const userId = (req as any).user?.userId;
+    const { content, parentId } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
     const comment = await prisma.comment.create({
       data: {
-        blogId: Number(blogId),
-        name,
-        email,
+        blogId,
+        name: user?.name || "Anonymous",
+        email: user?.email || "",
         content,
         parentId: parentId || null,
       },
     });
-    res.json({ success: true, data: comment });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to create comment" });
-  }
-});
 
-// Reply to comment
-router.post("/:blogId/comments/:commentId/replies", async (req, res) => {
-  try {
-    const { blogId, commentId } = req.params;
-    const { name, email, content } = req.body;
+    res.status(201).json({ success: true, data: comment });
+  })
+);
+
+router.post(
+  "/:commentId/replies",
+  auth("USER", "PREMIUM_USER", "ADMIN"),
+  catchAsync(async (req: Request, res: Response) => {
+    const blogId = Number((req.params as any).blogId);
+    const userId = (req as any).user?.userId;
+    const { content } = req.body;
+    const commentId = Number(req.params.commentId);
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
     const reply = await prisma.comment.create({
       data: {
-        blogId: Number(blogId),
-        parentId: Number(commentId),
-        name,
-        email,
+        blogId,
+        parentId: commentId,
+        name: user?.name || "Anonymous",
+        email: user?.email || "",
         content,
       },
     });
-    res.json({ success: true, data: reply });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to create reply" });
-  }
-});
 
-// Delete comment
-router.delete("/:blogId/comments/:commentId", async (req, res) => {
-  try {
-    const { commentId } = req.params;
-    await prisma.comment.delete({ where: { id: Number(commentId) } });
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to delete comment" });
-  }
-});
+    res.status(201).json({ success: true, data: reply });
+  })
+);
+
+router.delete(
+  "/:commentId",
+  auth("USER", "PREMIUM_USER", "ADMIN"),
+  catchAsync(async (req: Request, res: Response) => {
+    const commentId = Number(req.params.commentId);
+    await prisma.comment.delete({ where: { id: commentId } });
+    res.status(200).json({ success: true });
+  })
+);
 
 export const CommentRoutes = router;

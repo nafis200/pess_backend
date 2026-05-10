@@ -19,7 +19,24 @@ const fileUploader_1 = require("../../helper/fileUploader");
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const router = (0, express_1.Router)();
-router.get("/", (0, auth_1.default)("ADMIN"), (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const gallery = yield prisma_1.default.imageGallery.findFirst();
+    if (!gallery || !gallery.images) {
+        return res.status(200).json({
+            success: true,
+            data: [],
+        });
+    }
+    const images = gallery.images.map((url, index) => ({
+        id: `${gallery.id}-${index}`,
+        url: url,
+    }));
+    res.status(200).json({
+        success: true,
+        data: images,
+    });
+})));
+router.get("/admin", (0, auth_1.default)("ADMIN"), (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const gallery = yield prisma_1.default.imageGallery.findFirst();
     if (!gallery || !gallery.images) {
         return res.status(200).json({
