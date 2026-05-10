@@ -28,7 +28,12 @@ export default {
         cloud_secret_key: process.env.CLOUDINARY_SECRET_KEY
     },
 
+    googleDrive: {
+        serviceAccountBase64: process.env.GOOGLE_SERVICE_ACCOUNT_BASE64,
+        folderId: process.env.GOOGLE_DRIVE_FOLDER_ID
+    },
 
     databaseUrl: process.env.DATABASE_URL,
     frontend_url: process.env.FRONTEND_URL,
+    backend_url: process.env.BACKEND_URL,
 };

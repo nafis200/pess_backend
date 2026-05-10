@@ -7,25 +7,143 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  password  String
+  id            Int        @id @default(autoincrement())
+  email         String     @unique
+  name          String?
+  password      String
   profilePhoto  String?
-  contactNumber  String?
-  verified Boolean @default(false)
-  role UserRole             @default(USER)
-  status                    UserStatus          @default(ACTIVE)
-  createdAt                 DateTime            @default(now())
-  updatedAt               DateTime             @updatedAt
-
-  blogs                   Blog[]
-  members                 Member[]
+  contactNumber String?
+  verified      Boolean    @default(false)
+  role          UserRole   @default(USER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  blogs         Blog[]
+  members       Member[]
 }
 
 model ImageGallery {
-  id      Int      @id @default(autoincrement())
-  images  String[]
+  id     Int      @id @default(autoincrement())
+  images String[]
+}
+
+model Member {
+  id               Int           @id @default(autoincrement())
+  name             String
+  email            String?
+  profilePhoto     String?
+  phone            String?
+  memberType       MemberType    @default(STUDENT)
+  sportCategory    String?
+  role             String?
+  status           String        @default("ACTIVE")
+  institution      String?
+  expertise        String[]
+  achievements     String[]
+  highlights       String?
+  yearsActive      Int?
+  graduationYear   Int?
+  userId           Int?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  achievements_rel Achievement[]
+  user             User?         @relation(fields: [userId], references: [id])
+
+  @@index([memberType])
+  @@index([sportCategory])
+  @@index([status])
+}
+
+model Achievement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  type        String
+  level       String
+  sport       String?
+  year        Int?
+  date        DateTime?
+  memberId    Int?
+  medal       String?
+  trophy      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  imageUrl    String?
+  member      Member?   @relation(fields: [memberId], references: [id])
+
+  @@index([type])
+  @@index([sport])
+  @@index([level])
+}
+
+model Blog {
+  id                 Int        @id @default(autoincrement())
+  title              String
+  slug               String     @unique
+  shortDescription   String?
+  content            String
+  featuredImage      String?
+  category           String?
+  tags               String[]
+  status             BlogStatus @default(DRAFT)
+  seoMetaTitle       String?
+  seoMetaDescription String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  authorId           Int?
+  author             User?      @relation(fields: [authorId], references: [id])
+  comments           Comment[]
+  reactions          Reaction[]
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  blogId    Int
+  parentId  Int?
+  name      String
+  email     String
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  blog      Blog      @relation(fields: [blogId], references: [id])
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+
+  @@index([blogId])
+}
+
+model Reaction {
+  id        Int      @id @default(autoincrement())
+  blogId    Int
+  type      String
+  userId    String?
+  createdAt DateTime @default(now())
+  blog      Blog     @relation(fields: [blogId], references: [id])
+
+  @@unique([blogId, type, userId])
+  @@index([blogId])
+}
+
+model Notice {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String?
+  category    String?  @default("General")
+  pdfUrl      String
+  publicId    String?  // We'll use this for Google Drive File ID
+  isPublished Boolean  @default(true)
+  publishDate DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([publishDate])
 }
 
 enum UserRole {
@@ -46,119 +164,6 @@ enum MemberType {
   ATHLETE
   CAPTAIN
   ALUMNI
-}
-
-model Member {
-  id            Int            @id @default(autoincrement())
-  name          String         
-  email         String?        
-  profilePhoto  String?        
-  phone         String?        
-  
-  memberType    MemberType     @default(STUDENT)
-  sportCategory String?        
-  role          String?        
-  status        String         @default("ACTIVE")
-  
-  institution    String?        
-  expertise     String[]      
-  achievements  String[]      
-  highlights     String?       
-  yearsActive    Int?
-  graduationYear Int?
-  
-  userId         Int?
-  user           User?         @relation(fields: [userId], references: [id])
-  
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-
-  achievements_rel Achievement[]
-
-  @@index([memberType])
-  @@index([sportCategory])
-  @@index([status])
-}
-
-model Achievement {
-  id            Int      @id @default(autoincrement())
-  title         String   
-  description   String?  
-  type          String   
-  level         String   
-  
-  sport         String?  
-  year          Int?
-  date          DateTime?
-  imageUrl      String?
-  
-  memberId      Int?
-  member        Member?  @relation(fields: [memberId], references: [id])
-  
-  medal         String?  
-  trophy        String?  
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([type])
-  @@index([sport])
-  @@index([level])
-}
-
-model Blog {
-  id                  Int          @id @default(autoincrement())
-  title               String       
-  slug                String       @unique 
-  shortDescription    String?      
-  content             String       
-  featuredImage       String?      
-  category            String?      
-  tags                String[]     
-  status              BlogStatus   @default(DRAFT)
-  seoMetaTitle        String?      
-  seoMetaDescription  String?      
-  authorId           Int?
-  author             User?        @relation(fields: [authorId], references: [id])
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
-
-  comments            Comment[]
-  reactions           Reaction[]
-
-  @@index([status])
-  @@index([category])
-  @@index([createdAt])
-}
-
-model Comment {
-  id        Int      @id @default(autoincrement())
-  blogId    Int
-  parentId  Int?
-  name      String
-  email     String
-  content   String   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  blog      Blog     @relation(fields: [blogId], references: [id])
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
-
-  @@index([blogId])
-}
-
-model Reaction {
-  id        Int      @id @default(autoincrement())
-  blogId    Int
-  type      String
-  userId    String?
-  createdAt DateTime @default(now())
-
-  blog      Blog     @relation(fields: [blogId], references: [id])
-
-  @@index([blogId])
-  @@unique([blogId, type, userId])
 }
 
 enum BlogStatus {

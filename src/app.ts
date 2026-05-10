@@ -21,6 +21,7 @@ app.use(
 );
 
 app.use(express.static(path.join(__dirname, "../public")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.get("/", (req: Request, res: Response) => {
   res.send({
@@ -44,4 +45,3 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 export default app;
-
