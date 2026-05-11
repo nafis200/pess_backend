@@ -7,7 +7,10 @@ const express_1 = __importDefault(require("express"));
 const auth_route_1 = require("../modules/Auth/auth.route");
 const blog_route_1 = require("../modules/Blog/blog.route");
 const public_blog_route_1 = require("../modules/Blog/public.blog.route");
-const image_route_1 = require("../modules/Image/image.route");
+const booking_route_1 = require("../modules/booking/booking.route");
+const image_routes_1 = require("../modules/images/image.routes");
+const video_routes_1 = require("../modules/video/video.routes");
+const notice_route_1 = require("../modules/notice/notice.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -24,8 +27,20 @@ const moduleRoutes = [
     },
     {
         path: "/image",
-        route: image_route_1.ImageRoutes,
+        route: image_routes_1.ImageRoutes,
     },
+    {
+        path: "/booking",
+        route: booking_route_1.BookingRoutes
+    },
+    {
+        path: "/video",
+        route: video_routes_1.VideoRoutes
+    },
+    {
+        path: "/notice",
+        route: notice_route_1.NoticeRoutes
+    }
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
 exports.default = router;

@@ -82,7 +82,7 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
             name,
             email,
             password: hashedPassword,
-            role: "ADMIN",
+            role: "USER",
         },
         select: {
             id: true,
