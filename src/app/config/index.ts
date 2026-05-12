@@ -45,4 +45,8 @@ export default {
     databaseUrl: process.env.DATABASE_URL,
     frontend_url: process.env.FRONTEND_URL,
     backend_url: process.env.BACKEND_URL,
+   supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+  },
 };

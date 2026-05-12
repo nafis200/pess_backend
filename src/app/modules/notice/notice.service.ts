@@ -1,31 +1,32 @@
 import prisma from "../../../shared/prisma";
 import { fileUploader } from "../../helper/fileUploader";
+import { uploadPdfToSupabase } from "../../helper/uploadPdfToSupabase";
 
-const createNotice = async (
-  payload: any,
-) => {
+const createNotice = async (payload: any, file: any) => {
+  const title =
+    payload.title?.trim() || payload["title "]?.trim() || "";
 
- 
+  const description =
+    payload.description?.trim() || payload["description "]?.trim() || "";
 
-  const title = payload.title?.trim() || payload['title ']?.trim() || "";
-  const description = payload.description?.trim() || payload['description ']?.trim() || "";
-  const noticeDate = payload.noticeDate?.trim() || payload['noticeDate ']?.trim() || "";
+  const noticeDate =
+    payload.noticeDate?.trim() || payload["noticeDate "]?.trim() || "";
 
-  if (!title) {
-    throw new Error("Title is required");
+  if (!title) throw new Error("Title is required");
+  if (!noticeDate) throw new Error("Notice date is required");
+
+  let pdfUrl = null;
+
+  if (file) {
+    pdfUrl = await uploadPdfToSupabase(file);
   }
-
-  if (!noticeDate) {
-    throw new Error("Notice date is required");
-  }
-
- 
 
   const result = await prisma.notice.create({
     data: {
       title,
       description: description || null,
-      noticeDate: new Date(noticeDate)
+      noticeDate: new Date(noticeDate),
+      pdfUrl, // 🔥 store link here
     },
   });
 

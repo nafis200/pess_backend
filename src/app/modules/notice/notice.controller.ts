@@ -7,14 +7,11 @@ import sendResponse from "../../../shared/sendResponse";
 import { NoticeService } from "./notice.service";
 
 const createNotice = catchAsync(async (req: Request, res: Response) => {
-
-
- 
+  const pdf = (req.files as any).pdf;
   const result = await NoticeService.createNotice(
     req.body,
+    pdf
   );
-
-  
 
   sendResponse(res, {
     success: true,

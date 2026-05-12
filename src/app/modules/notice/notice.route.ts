@@ -1,13 +1,15 @@
 import express from "express";
 import { NoticeController } from "./notice.controller";
-import { fileUploader } from "../../helper/fileUploader";
-
+import fileUpload from "express-fileupload";
 const router = express.Router();
 
-router.post(
-  "/create-notice",
-  NoticeController.createNotice
+router.use(
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 },
+  })
 );
+
+router.post("/create-notice", NoticeController.createNotice);
 
 router.get("/", NoticeController.getAllNotices);
 
