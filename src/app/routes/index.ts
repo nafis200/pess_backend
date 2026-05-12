@@ -9,6 +9,7 @@ import MemberRoutes from "../modules/Member/member.route";
 import { NoticeRoutes } from "../modules/Notice/notice.routes";
 import { ImageRoutes } from "../modules/images/image.routes";
 import { AboutRoutes } from "../modules/About/about.routes";
+import { VideoRoutes } from "../modules/video/video.routes";
 
 const router = express.Router();
 
@@ -44,6 +45,10 @@ const moduleRoutes = [
   {
     path: "/about",
     route: AboutRoutes,
+  },
+  {
+    path: "/video",
+    route: VideoRoutes,
   },
 ];
 
