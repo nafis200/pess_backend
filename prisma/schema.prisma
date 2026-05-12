@@ -192,16 +192,17 @@ enum MemberType {
 }
 
 model Booking {
-  id          Int      @id @default(autoincrement())
-  userEmail   String
-  userName    String?
-  slotStart   DateTime
-  slotEnd     DateTime
-  status      BookingStatus @default(PENDING)
-  meetingLink String?
-  note        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  userEmail     String
+  subject       String
+  description   String?
+  slotStart     DateTime
+  slotEnd       DateTime
+  status        BookingStatus @default(PENDING)
+  meetingLink   String?
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 enum BookingStatus {

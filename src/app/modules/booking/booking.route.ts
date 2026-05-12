@@ -26,7 +26,8 @@ export const BookingRoutes = router;
 
 // {
 //   "userEmail": "user@gmail.com",
-//   "userName": "Nafis",
+//   "subject": "Career Guidance Meeting",
+//   "description": "I want to discuss freelancing roadmap",
 //   "slotStart": "2026-05-10T10:00:00.000Z",
 //   "slotEnd": "2026-05-10T11:00:00.000Z"
 // }

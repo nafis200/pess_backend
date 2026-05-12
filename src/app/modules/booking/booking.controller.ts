@@ -50,13 +50,20 @@ const rescheduleBooking = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllBookings = catchAsync(async (req: Request, res: Response) => {
-  const result = await BookingService.getAllBookings();
+  const { email, page, limit } = req.query;
+
+  const result = await BookingService.getAllBookings({
+    email: email as string,
+    page: page as string,
+    limit: limit as string,
+  });
 
   sendResponse(res, {
     success: true,
     status: httpStatus.OK,
-    message: "All bookings fetched",
-    data: result,
+    message: "All bookings fetched successfully",
+    meta: result.meta,
+    data: result.data,
   });
 });
 
