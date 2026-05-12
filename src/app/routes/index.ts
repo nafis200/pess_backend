@@ -7,6 +7,7 @@ import { ImageRoutes } from "../modules/Image/image.route";
 import { AchievementUploadRoutes } from "../modules/Image/achievement-upload.route";
 import MemberRoutes from "../modules/Member/member.route";
 import { NoticeRoutes } from "../modules/Notice/notice.routes";
+import { AboutRoutes } from "../modules/About/about.routes";
 
 const router = express.Router();
 
@@ -38,6 +39,10 @@ const moduleRoutes = [
   {
     path: "/notices",
     route: NoticeRoutes,
+  },
+  {
+    path: "/about",
+    route: AboutRoutes,
   },
 ];
 

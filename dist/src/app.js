@@ -19,6 +19,7 @@ app.use((0, cors_1.default)({
     credentials: true,
 }));
 app.use(express_1.default.static(path_1.default.join(__dirname, "../public")));
+app.use("/uploads", express_1.default.static(path_1.default.join(process.cwd(), "uploads")));
 app.get("/", (req, res) => {
     res.send({
         Message: "Project start..",

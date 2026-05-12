@@ -20,13 +20,11 @@ const auth = (...roles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         try {
-            const headerToken = req.headers.authorization;
-            const cookieToken = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken;
-            const token = headerToken || cookieToken;
-            if (!token) {
+            const headerToken = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.replace(/^Bearer\s+/i, "");
+            if (!headerToken) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized!");
             }
-            const verifiedUser = jwtHelper_1.jwtHelpers.verifyToken(token, config_1.default.jwt.jwt_secret);
+            const verifiedUser = jwtHelper_1.jwtHelpers.verifyToken(headerToken, config_1.default.jwt.jwt_secret);
             req.user = verifiedUser;
             if (roles.length && !roles.includes(verifiedUser.role)) {
                 throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "Forbidden!");

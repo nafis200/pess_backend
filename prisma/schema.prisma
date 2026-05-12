@@ -170,3 +170,130 @@ enum BlogStatus {
   DRAFT
   PUBLISHED
 }
+
+// About Page Models
+
+model AboutPage {
+  id                    Int        @id @default(autoincrement())
+  name                  String?
+  designation           String?
+  tagline               String?
+  profileImage          String?
+  introText             String?
+  resumeLink            String?
+  aboutDescription      String?
+  yearsOfExperience     Int?
+  facebook              String?
+  linkedin              String?
+  youtube               String?
+  email                 String?
+  quote                 String?
+  quoteAuthor           String?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model Skill {
+  id          Int      @id @default(autoincrement())
+  name        String
+  percentage  Int
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Education {
+  id              Int      @id @default(autoincrement())
+  degree          String
+  institution     String
+  passingYear     Int?
+  specialization  String?
+  grade           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Experience {
+  id              Int      @id @default(autoincrement())
+  institutionName String
+  role            String
+  duration        String
+  description     String?
+  sports          String[]
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SportExpertise {
+  id          Int      @id @default(autoincrement())
+  name        String
+  icon        String
+  description String?
+  level       String   @default("Intermediate")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutAchievement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  organization String?
+  year        Int?
+  icon        String   @default("trophy")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutCertification {
+  id              Int      @id @default(autoincrement())
+  certificateName String
+  organization    String
+  year            Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DailyActivity {
+  id          Int      @id @default(autoincrement())
+  title       String
+  time        String
+  description String?
+  icon        String   @default("clock")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Statistic {
+  id          Int      @id @default(autoincrement())
+  title       String
+  count       Int
+  suffix      String   @default("+")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          Int      @id @default(autoincrement())
+  studentName String
+  image       String?
+  message     String
+  designation String?
+  rating      Int      @default(5)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutGalleryImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  caption   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
