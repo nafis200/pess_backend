@@ -22,6 +22,31 @@ model User {
   members       Member[]
 }
 
+model Image {
+  id         String   @id @default(uuid())
+  name       String
+  size       Int
+  mimetype   String
+  url        String
+  publicId   String   
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("images")
+}
+
+model Video {
+  id        String   @id @default(uuid())
+  title     String
+  videoLink String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("videos")
+}
+
+
+
 model ImageGallery {
   id     Int      @id @default(autoincrement())
   images String[]
@@ -165,6 +190,38 @@ enum MemberType {
   CAPTAIN
   ALUMNI
 }
+
+model Booking {
+  id            Int      @id @default(autoincrement())
+  userEmail     String
+  subject       String
+  description   String?
+  slotStart     DateTime
+  slotEnd       DateTime
+  status        BookingStatus @default(PENDING)
+  meetingLink   String?
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Notice {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  noticeDate  DateTime
+  pdfUrl      String? 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RESCHEDULED
+}
+
 
 enum BlogStatus {
   DRAFT

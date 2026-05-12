@@ -67,8 +67,12 @@ const registerUser = async (payload: RegisterUserInput) => {
     config.jwt.refresh_token_expires_in as string,
   );
 
+
+
   const resetPassLink =
     config.registration_link + `?email=${result.email}&token=${resetPassToken}`;
+
+    console.log(resetPassLink);
 
   await emailSender(
     result.email,
@@ -118,6 +122,8 @@ const verifyEmailService = async (token: string) => {
     token,
     process.env.REGISTER_VERIFY_TOKEN as Secret,
   );
+
+  console.log(payload,"verified");
 
   if (!payload) {
     throw new ApiError(httpStatus.FORBIDDEN, "Token is invalid!");

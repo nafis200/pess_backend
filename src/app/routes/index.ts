@@ -3,11 +3,11 @@ import express from "express";
 import { AuthRoutes } from "../modules/Auth/auth.route";
 import { BlogRoutes } from "../modules/Blog/blog.route";
 import { PublicBlogRoutes } from "../modules/Blog/public.blog.route";
-import { ImageRoutes } from "../modules/Image/image.route";
+
 import { AchievementUploadRoutes } from "../modules/Image/achievement-upload.route";
 import MemberRoutes from "../modules/Member/member.route";
 import { NoticeRoutes } from "../modules/Notice/notice.routes";
-import { AboutRoutes } from "../modules/About/about.routes";
+import { ImageRoutes } from "../modules/images/image.routes";
 
 const router = express.Router();
 
