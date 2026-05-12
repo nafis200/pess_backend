@@ -8,6 +8,7 @@ import { AchievementUploadRoutes } from "../modules/Image/achievement-upload.rou
 import MemberRoutes from "../modules/Member/member.route";
 import { NoticeRoutes } from "../modules/Notice/notice.routes";
 import { ImageRoutes } from "../modules/images/image.routes";
+import { AboutRoutes } from "../modules/About/about.routes";
 
 const router = express.Router();
 
