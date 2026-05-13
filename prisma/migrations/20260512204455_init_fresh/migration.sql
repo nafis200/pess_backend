@@ -1,8 +1,67 @@
 -- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('USER', 'PREMIUM_USER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'BLOCKED', 'DELETED');
+
+-- CreateEnum
 CREATE TYPE "MemberType" AS ENUM ('FACULTY', 'STUDENT', 'ATHLETE', 'CAPTAIN', 'ALUMNI');
 
 -- CreateEnum
+CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'RESCHEDULED');
+
+-- CreateEnum
 CREATE TYPE "BlogStatus" AS ENUM ('DRAFT', 'PUBLISHED');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT,
+    "password" TEXT NOT NULL,
+    "profilePhoto" TEXT,
+    "contactNumber" TEXT,
+    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "role" "UserRole" NOT NULL DEFAULT 'USER',
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "images" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "mimetype" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "images_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "videos" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "videoLink" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "videos_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ImageGallery" (
+    "id" SERIAL NOT NULL,
+    "images" TEXT[],
+
+    CONSTRAINT "ImageGallery_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Member" (
@@ -109,6 +168,39 @@ CREATE TABLE "Notice" (
 
     CONSTRAINT "Notice_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "Booking" (
+    "id" SERIAL NOT NULL,
+    "userEmail" TEXT NOT NULL,
+    "subject" TEXT NOT NULL,
+    "description" TEXT,
+    "slotStart" TIMESTAMP(3) NOT NULL,
+    "slotEnd" TIMESTAMP(3) NOT NULL,
+    "status" "BookingStatus" NOT NULL DEFAULT 'PENDING',
+    "meetingLink" TEXT,
+    "note" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Notices" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "noticeDate" TIMESTAMP(3) NOT NULL,
+    "pdfUrl" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Notices_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "Member_memberType_idx" ON "Member"("memberType");

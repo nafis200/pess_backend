@@ -205,6 +205,16 @@ model Booking {
   updatedAt     DateTime @updatedAt
 }
 
+model Notices {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  noticeDate  DateTime
+  pdfUrl      String? 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 enum BookingStatus {
   PENDING
   APPROVED

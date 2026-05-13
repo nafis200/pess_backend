@@ -21,7 +21,7 @@ const createNotice = async (payload: any, file: any) => {
     pdfUrl = await uploadPdfToSupabase(file);
   }
 
-  const result = await prisma.notice.create({
+  const result = await prisma.notices.create({
     data: {
       title,
       description: description || null,
@@ -34,7 +34,7 @@ const createNotice = async (payload: any, file: any) => {
 };
 
 const getAllNotices = async () => {
-  return prisma.notice.findMany({
+  return prisma.notices.findMany({
     orderBy: {
       createdAt: "desc",
     },
@@ -43,14 +43,14 @@ const getAllNotices = async () => {
 
 const getSingleNotice = async (id: string) => {
 
-  return prisma.notice.findUnique({
+  return prisma.notices.findUnique({
     where: { id },
   });
 };
 
 const deleteNotice = async (id: string) => {
 
-  const notice = await prisma.notice.findUnique({
+  const notice = await prisma.notices.findUnique({
     where: { id },
   });
 
