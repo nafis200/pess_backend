@@ -1,7 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { NoticeController } from './notice.controller';
+
 import { fileUploader } from '../../helper/fileUploader';
 import { NoticeValidation } from './notice.validation';
+import { NoticeController } from './notice.controller';
+
 
 const router = express.Router();
 
@@ -31,4 +33,4 @@ router.patch('/:id/publish', NoticeController.togglePublishStatus);
 
 router.delete('/:id', NoticeController.deleteNotice);
 
-export const NoticeRoutes = router;
+export const SaniulNoticeRoutes = router;

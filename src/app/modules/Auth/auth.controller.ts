@@ -85,32 +85,31 @@ const getNewAccessToken = catchAsync(
   },
 );
 const logout = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-
-    const isProduction = process.env.NODE_ENV === "production";
+  async (req: Request, res: Response) => {
+    const isProduction =
+      process.env.NODE_ENV === "production";
 
     res.clearCookie("accessToken", {
       httpOnly: true,
-      secure: isProduction, 
-      sameSite: isProduction ? "none" : "lax", 
-      domain: isProduction ? ".hotel-book-management.vercel.app" : "localhost",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
+
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: isProduction, 
-      sameSite: isProduction ? "none" : "lax", 
-      domain: isProduction ? ".hotel-book-management.vercel.app" : "localhost",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
 
     sendResponse(res, {
       success: true,
-      status: httpStatus.OK,
+      status: 200,
       message: "User Logged Out Successfully",
       data: null,
     });
-  },
+  }
 );
 const ChangePassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

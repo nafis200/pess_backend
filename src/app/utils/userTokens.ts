@@ -6,33 +6,7 @@ import ApiError from "../errors/ApiError";
 import config from "../config";
 import prisma from "../../shared/prisma";
 
-/**
- * 🔥 Fake in-memory users (NO DB)
- */
-const users = [
-  {
-    id: "1",
-    email: "test@example.com",
-    password: "hashed_password_here",
-    role: "user",
-    isActive: "ACTIVE", // ACTIVE | BLOCKED | INACTIVE
-    isDeleted: false,
-  },
-  {
-    id: "2",
-    email: "admin@example.com",
-    password: "hashed_password_here",
-    role: "admin",
-    isActive: "ACTIVE",
-    isDeleted: false,
-  },
-];
 
-/**
- * =========================
- * CREATE ACCESS + REFRESH TOKEN
- * =========================
- */
 export const createUserTokens = (user: any) => {
   const jwtPayload = {
     userId: user.id,

@@ -5,13 +5,10 @@ export interface AuthTokens {
   refreshToken?: string;
 }
 
-export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
-  console.log(
-    "setAuthCookie - Setting cookies with tokenInfo:",
-    !!tokenInfo.accessToken,
-    !!tokenInfo.refreshToken,
-  );
-
+export const setAuthCookie = (
+  res: Response,
+  tokenInfo: AuthTokens
+) => {
   const isProduction = process.env.NODE_ENV === "production";
 
   if (tokenInfo.accessToken) {

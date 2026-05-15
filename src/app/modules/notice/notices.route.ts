@@ -1,5 +1,5 @@
 import express from "express";
-import { NoticeController } from "./notice.controller";
+import { NoticeController } from "./notices.controller";
 import fileUpload from "express-fileupload";
 const router = express.Router();
 

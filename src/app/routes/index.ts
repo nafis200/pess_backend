@@ -6,10 +6,11 @@ import { PublicBlogRoutes } from "../modules/Blog/public.blog.route";
 
 import { AchievementUploadRoutes } from "../modules/Image/achievement-upload.route";
 import MemberRoutes from "../modules/Member/member.route";
-import { NoticeRoutes } from "../modules/Notice/notice.routes";
 import { ImageRoutes } from "../modules/images/image.routes";
 import { AboutRoutes } from "../modules/About/about.routes";
 import { VideoRoutes } from "../modules/video/video.routes";
+import { BookingRoutes } from "../modules/booking/booking.route";
+import { NoticeRoutes } from "../modules/notice/notices.route";
 
 const router = express.Router();
 
@@ -50,6 +51,10 @@ const moduleRoutes = [
     path: "/video",
     route: VideoRoutes,
   },
+  {
+    path:"/booking",
+    route:BookingRoutes
+  }
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

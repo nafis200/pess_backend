@@ -2,7 +2,9 @@ import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import emailSender from "../../utils/emailSender";
 
-const ADMIN_EMAIL = "nafisahamed14@gmail.com";
+const ADMIN_EMAIL = "n.amin@just.edu.bd";
+
+// const ADMIN_EMAIL = "nafisahamed14@gmail.com"
 
 const meetLinks = [
   "https://meet.google.com/qiy-ouzj-fhd",

@@ -3,8 +3,10 @@ import httpStatus from "http-status";
 
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
+import { NoticeService } from "./notices.service";
 
-import { NoticeService } from "./notice.service";
+
+
 
 const createNotice = catchAsync(async (req: Request, res: Response) => {
   const pdf = (req.files as any).pdf;
