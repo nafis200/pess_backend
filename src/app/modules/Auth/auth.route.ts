@@ -11,7 +11,7 @@ router.post("/register", AuthControllers.registerUser);
 router.get("/verify-email", AuthControllers.verifyEmail);
 
 router.post("/login", AuthControllers.credentialsLogin);
-router.post("/refresh-token", AuthControllers.getNewAccessToken);
+router.post("/refresh-token",auth("USER", "ADMIN"), AuthControllers.getNewAccessToken);
 router.post("/logout", AuthControllers.logout);
 
 router.post("/change-password", auth("USER", "ADMIN"), AuthControllers.ChangePassword);
@@ -25,8 +25,8 @@ router.get("/", AuthControllers.getAllUsers);
 
 router.get("/me", auth(), AuthControllers.getMyProfile);
 
-router.get("/:id", AuthControllers.getSingleUser);
+router.get("/:id",auth("USER", "ADMIN"),AuthControllers.getSingleUser);
 
-router.delete("/:id", AuthControllers.deleteUser);
+router.delete("/:id",auth("ADMIN"),AuthControllers.deleteUser);
 
 export const AuthRoutes = router;

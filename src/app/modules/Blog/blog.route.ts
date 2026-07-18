@@ -4,14 +4,14 @@ import { BlogControllers } from "./blog.controller";
 
 const router = Router();
 
-router.post("/", auth("ADMIN"), BlogControllers.createBlog);
+router.post("/",auth("USER", "ADMIN"), BlogControllers.createBlog);
 
-router.get("/", auth("ADMIN"), BlogControllers.getAllBlogs);
+router.get("/", auth("USER", "ADMIN"), BlogControllers.getAllBlogs);
 
-router.get("/:id", auth("ADMIN"), BlogControllers.getSingleBlog);
+router.get("/:id", auth("USER", "ADMIN"), BlogControllers.getSingleBlog);
 
-router.put("/:id", auth("ADMIN"), BlogControllers.updateBlog);
+router.put("/:id",auth("USER", "ADMIN"), BlogControllers.updateBlog);
 
-router.delete("/:id", auth("ADMIN"), BlogControllers.deleteBlog);
+router.delete("/:id",auth("USER", "ADMIN"), BlogControllers.deleteBlog);
 
 export const BlogRoutes = router;

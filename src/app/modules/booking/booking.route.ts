@@ -1,6 +1,6 @@
 import express from "express";
 import { BookingController } from "./booking.controller";
-
+import auth from "../../middlewares/auth";
 
 const router = express.Router();
 
@@ -8,16 +8,16 @@ const router = express.Router();
 router.post("/", BookingController.createBooking);
 
 // admin actions
-router.patch("/approve/:id", BookingController.approveBooking);
-router.patch("/reject/:id", BookingController.rejectBooking);
-router.patch("/reschedule/:id", BookingController.rescheduleBooking);
+router.patch("/approve/:id",auth("ADMIN"), BookingController.approveBooking);
+router.patch("/reject/:id",auth("ADMIN"), BookingController.rejectBooking);
+router.patch("/reschedule/:id",auth("USER", "ADMIN"),BookingController.rescheduleBooking);
 
 // fetch
 router.get("/", BookingController.getAllBookings);
 router.get("/:id", BookingController.getSingleBooking);
 
 // delete
-router.delete("/:id", BookingController.deleteBooking);
+router.delete("/:id",auth("USER", "ADMIN"), BookingController.deleteBooking);
 
 export const BookingRoutes = router;
 
