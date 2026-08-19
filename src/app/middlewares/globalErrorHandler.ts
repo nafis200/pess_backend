@@ -13,7 +13,12 @@ const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFun
     let message = err.message || "Something went wrong!";
     let error = err;
 
-    if (err instanceof Prisma.PrismaClientValidationError) {
+    if (err.type === "entity.too.large" || err.status === httpStatus.REQUEST_ENTITY_TOO_LARGE) {
+        statusCode = httpStatus.REQUEST_ENTITY_TOO_LARGE;
+        message = "Payload too large";
+        error = null;
+    }
+    else if (err instanceof Prisma.PrismaClientValidationError) {
         statusCode = httpStatus.BAD_REQUEST;
         message = 'Validation Error';
         error = err.message
